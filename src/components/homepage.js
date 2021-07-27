@@ -134,6 +134,19 @@ const HomePage = () => {
             setSelectedId([])
             setUsers(updatedUsers)
         }
+        const mainCheckBox = document.getElementById('toggleAll')
+        mainCheckBox.checked = false
+    }
+
+    const startEditing = (e) => {
+        console.log(e.target.value)
+        const userId = e.target.value
+        const userIndex = currentUsers.findIndex(user => user.id === userId)
+        if(userIndex > -1){
+            setEditUser(currentUsers[userIndex])
+        }
+        setIsEditing(true)
+        setIsLoaded(false)
     }
 
     const updateUser = (data) => {
@@ -145,20 +158,21 @@ const HomePage = () => {
             console.log('user updated')
         }
         setIsEditing(false)
-    }
-
-    const startEditing = (e) => {
-        console.log(e.target.value)
-        const userId = e.target.value
-        const userIndex = currentUsers.findIndex(user => user.id === userId)
-        if(userIndex > -1){
-            setEditUser(currentUsers[userIndex])
-        }
-        setIsEditing(true)
+        setIsLoaded(true)
     }
 
     const cancelEditing = () => {
         setIsEditing(false)
+        setIsLoaded(true)
+    }
+
+    const deleteUser = (e) => {
+        const userId = e.target.value
+        const userIndex = currentUsers.findIndex(user => user.id === userId)
+        const updatedUsers = [...users]
+        updatedUsers.splice(userIndex,1)
+        setUsers(updatedUsers)
+        console.log('user deleted')
     }
 
 
@@ -169,7 +183,7 @@ const HomePage = () => {
             <Table responsive hover size="sm">
             <thead>
                 <tr>
-                <th><input type="checkbox" onChange={toggleAllCheckBox}/></th>
+                <th><input id="toggleAll" type="checkbox" onChange={toggleAllCheckBox}/></th>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
@@ -189,7 +203,7 @@ const HomePage = () => {
                                 <td>{user.role}</td>
                                 <td>
                                     <Button className="actionButton" variant="warning" size="sm" value={user.id} onClick={startEditing}>Edit</Button>
-                                    <Button className="actionButton" variant="danger" size="sm" value={user.id} >Delete</Button>
+                                    <Button className="actionButton" variant="danger" size="sm" value={user.id} onClick={deleteUser} >Delete</Button>
                                 </td>
                                 </tr>
                             </Fragment>
