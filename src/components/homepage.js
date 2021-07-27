@@ -6,6 +6,7 @@ import EditUser from './editUser'
 const HomePage = () => {
 
     const [users, setUsers] = useState([])
+    const [backupUser, setBackupUser] = useState([])
     const [selectedId, setSelectedId] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
     const [pages, setPages] = useState(0)
@@ -16,6 +17,7 @@ const HomePage = () => {
     const [editUser, setEditUser] = useState({})
     const [isEditing, setIsEditing] = useState(false)
 
+
     useEffect(() => {
         console.log('firstload')
         fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json')
@@ -23,6 +25,7 @@ const HomePage = () => {
         .then((data) => {
             setPages(Math.ceil(data.length/10))
             setUsers(data)
+            setBackupUser(data)
             setIsLoaded(true)
         })
     }, [])
@@ -133,12 +136,14 @@ const HomePage = () => {
             })
             setSelectedId([])
             setUsers(updatedUsers)
+            setBackupUser(updatedUsers)
         }
         const mainCheckBox = document.getElementById('toggleAll')
         mainCheckBox.checked = false
     }
 
     const startEditing = (e) => {
+        console.log(localStorage.getItem('users'))
         console.log(e.target.value)
         const userId = e.target.value
         const userIndex = currentUsers.findIndex(user => user.id === userId)
@@ -155,6 +160,7 @@ const HomePage = () => {
             const updatedUsers = [...users]
             updatedUsers.splice(userIndex,1,data)
             setUsers(updatedUsers)
+            setBackupUser(updatedUsers)
             console.log('user updated')
         }
         setIsEditing(false)
@@ -172,12 +178,30 @@ const HomePage = () => {
         const updatedUsers = [...users]
         updatedUsers.splice(userIndex,1)
         setUsers(updatedUsers)
+        setBackupUser(updatedUsers)
         console.log('user deleted')
+    }
+
+    const searchUser = (e) => {
+        const searchKey = e.target.value
+        if(searchKey.length){
+            const usersFiltered = []
+            for(let i=0; i<backupUser.length; i++){
+                for(let key in backupUser[i]){
+                    if(backupUser[i][key].indexOf(searchKey) !== -1){
+                        usersFiltered.push(backupUser[i])
+                        break
+                    }
+                }
+            }
+            setUsers(usersFiltered)
+        }
     }
 
 
     return (
         <div className="container">
+            <input type="text" placeholder="Search here" onChange={searchUser} />
             {isEditing ? (<EditUser user={editUser} updateUser={updateUser} cancelEditing={cancelEditing}/>) :
             (<div>
             <Table responsive hover size="sm">
