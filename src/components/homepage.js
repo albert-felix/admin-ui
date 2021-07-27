@@ -6,12 +6,15 @@ const HomePage = () => {
 
     const [users, setUsers] = useState([])
     const [selectedId, setSelectedId] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const [pages, setPages] = useState(0)
 
     useEffect(() => {
         fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json')
         .then(response => response.json())
         .then((data) => {
             setUsers(data)
+            setPages(Math.ceil(users.length/10))
         })
     }, [])
 
@@ -50,9 +53,14 @@ const HomePage = () => {
         e.target.checked ? setSelectedId(ids) : setSelectedId([])
     }
 
+    const changePage = (e) => {
+        setCurrentPage(e.target.value)
+    }
+
+
     return (
         <div className="container">
-            <Table responsive bordered hover size="sm">
+            <Table responsive hover size="sm">
             <thead>
                 <tr>
                 <th><input type="checkbox" onChange={toggleAllCheckBox}/></th>
@@ -83,6 +91,18 @@ const HomePage = () => {
                 })}
             </tbody>
             </Table>
+            <div className="pagination">
+                <Button variant="danger" size="sm">Delete Selected</Button>
+                <Button id="firstpage" variant="success" size="sm">&lt;&lt;</Button>
+                <Button id="prevpage" variant="success" size="sm">&lt;</Button>
+                    {[...Array(pages)].map((x,i) => {
+                        return(
+                            <Button onClick={changePage} value={i+1} id={`page${i+1}`} key={i+1} variant="success" size="sm">{i+1}</Button>
+                        )
+                    })}
+                <Button id="nextpage" variant="success" size="sm">&gt;</Button>
+                <Button id="lastpage" variant="success" size="sm">&gt;&gt;</Button>
+            </div>
         </div>
     )
 }
