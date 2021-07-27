@@ -1,3 +1,7 @@
+body {
+  background-color: rgb(241, 197, 197);
+}
+
 .selected {
   background-color: grey;
 }
@@ -13,4 +17,10 @@
 
 .updateButton {
   margin-right: 10px;
+}
+
+.header {
+  text-align: center;
+  margin: 25px;
+  font-family: Times New Roman, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
