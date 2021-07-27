@@ -19,7 +19,6 @@ const HomePage = () => {
 
 
     useEffect(() => {
-        console.log('firstload')
         fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json')
         .then(response => response.json())
         .then((data) => {
@@ -30,9 +29,6 @@ const HomePage = () => {
         })
     }, [])
 
-    useEffect(() => {
-        console.log(selectedId)
-    })
 
     useEffect(() => {
         if(isLoaded){
@@ -118,7 +114,6 @@ const HomePage = () => {
     }
 
     const changePage = (pageNum) => {
-        console.log('page changed')
         const currentPageButton = document.getElementById(`page${currentPage}`)
         currentPageButton.disabled = false
         setCurrentPage(pageNum)
@@ -143,8 +138,6 @@ const HomePage = () => {
     }
 
     const startEditing = (e) => {
-        console.log(localStorage.getItem('users'))
-        console.log(e.target.value)
         const userId = e.target.value
         const userIndex = currentUsers.findIndex(user => user.id === userId)
         if(userIndex > -1){
@@ -161,7 +154,6 @@ const HomePage = () => {
             updatedUsers.splice(userIndex,1,data)
             setUsers(updatedUsers)
             setBackupUser(updatedUsers)
-            console.log('user updated')
         }
         setIsEditing(false)
         setIsLoaded(true)
@@ -179,7 +171,6 @@ const HomePage = () => {
         updatedUsers.splice(userIndex,1)
         setUsers(updatedUsers)
         setBackupUser(updatedUsers)
-        console.log('user deleted')
     }
 
     const searchUser = (e) => {
