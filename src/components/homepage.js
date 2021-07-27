@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { Fragment } from 'react'
 import {Table, Button} from 'react-bootstrap'
+import EditUser from './editUser'
 
 const HomePage = () => {
 
@@ -11,6 +12,9 @@ const HomePage = () => {
     const pageLimit = 10
     const [pageStartIndex, setPageStartIndex] = useState(0)
     const [currentUsers, setCurrentUsers] = useState([])
+    const [isLoaded, setIsLoaded] = useState(false)
+    const [editUser, setEditUser] = useState({})
+    const [isEditing, setIsEditing] = useState(false)
 
     useEffect(() => {
         console.log('firstload')
@@ -19,6 +23,7 @@ const HomePage = () => {
         .then((data) => {
             setPages(Math.ceil(data.length/10))
             setUsers(data)
+            setIsLoaded(true)
         })
     }, [])
 
@@ -27,13 +32,56 @@ const HomePage = () => {
     })
 
     useEffect(() => {
+        if(isLoaded){
+            const disableButton = () => {
+                if(currentPage <= pages){
+                    const currentPageButton = document.getElementById(`page${currentPage}`)
+                    currentPageButton.disabled = true
+                }
+                const nextPage = document.getElementById('nextpage')
+                const lastPage = document.getElementById('lastpage')
+                const prevPage = document.getElementById('prevpage')
+                const firstPage = document.getElementById('firstpage')
+                if(pages <= 1){
+                    nextPage.disabled = true
+                    lastPage.disabled = true
+                    prevPage.disabled = true
+                    firstPage.disabled = true
+                }
+                else if(parseInt(currentPage,10) === pages){
+                    nextPage.disabled = true
+                    lastPage.disabled = true
+                    prevPage.disabled = false
+                    firstPage.disabled = false
+                }
+                else if(parseInt(currentPage,10) === 1){
+                    prevPage.disabled = true
+                    firstPage.disabled = true
+                    nextPage.disabled = false
+                    lastPage.disabled = false
+                }
+                else{
+                    prevPage.disabled = false
+                    firstPage.disabled = false
+                    nextPage.disabled = false
+                    lastPage.disabled = false
+                }
+            }
+            disableButton()
+        }
         setPageStartIndex((currentPage-1)*pageLimit)
-        
-    }, [currentPage])
+    }, [currentPage, pages, isLoaded])
 
     useEffect(() => {
         setCurrentUsers(users.slice(pageStartIndex, pageStartIndex+pageLimit))
+        setPages(Math.ceil(users.length/10))
     }, [pageStartIndex, users])
+
+    useEffect(() => {
+        if(currentPage > pages){
+            setCurrentPage(1)
+        }
+    }, [pages, currentPage])
 
     const toggleCheckBox = (e) => {
         const newId = e.target.value
@@ -66,13 +114,58 @@ const HomePage = () => {
         e.target.checked ? setSelectedId(ids) : setSelectedId([])
     }
 
-    const changePage = (e) => {
-        setCurrentPage(e.target.value)
+    const changePage = (pageNum) => {
+        console.log('page changed')
+        const currentPageButton = document.getElementById(`page${currentPage}`)
+        currentPageButton.disabled = false
+        setCurrentPage(pageNum)
+    }
+
+    const deleteSelected = () => {
+        if(selectedId.length){
+            const updatedUsers = [...users]
+            selectedId.forEach(id => {
+                updatedUsers.forEach((user,index) => {
+                    if(id === user.id){
+                        updatedUsers.splice(index,1)
+                    }
+                })
+            })
+            setSelectedId([])
+            setUsers(updatedUsers)
+        }
+    }
+
+    const updateUser = (data) => {
+        const userIndex = users.findIndex(user => user.id === data.id)
+        if(userIndex > -1){
+            const updatedUsers = [...users]
+            updatedUsers.splice(userIndex,1,data)
+            setUsers(updatedUsers)
+            console.log('user updated')
+        }
+        setIsEditing(false)
+    }
+
+    const startEditing = (e) => {
+        console.log(e.target.value)
+        const userId = e.target.value
+        const userIndex = currentUsers.findIndex(user => user.id === userId)
+        if(userIndex > -1){
+            setEditUser(currentUsers[userIndex])
+        }
+        setIsEditing(true)
+    }
+
+    const cancelEditing = () => {
+        setIsEditing(false)
     }
 
 
     return (
         <div className="container">
+            {isEditing ? (<EditUser user={editUser} updateUser={updateUser} cancelEditing={cancelEditing}/>) :
+            (<div>
             <Table responsive hover size="sm">
             <thead>
                 <tr>
@@ -86,7 +179,6 @@ const HomePage = () => {
             </thead>
             <tbody>
                 {currentUsers.map((user,index) => {
-                    // setCurrentUsers([...currentUsers,user])
                         return(
                             <Fragment key={user.id}>
                                 <tr id={`row${user.id}`}>
@@ -96,8 +188,8 @@ const HomePage = () => {
                                 <td>{user.email}</td>
                                 <td>{user.role}</td>
                                 <td>
-                                    <Button className="actionButton" variant="warning" size="sm">Edit</Button>
-                                    <Button className="actionButton" variant="danger" size="sm">Delete</Button>
+                                    <Button className="actionButton" variant="warning" size="sm" value={user.id} onClick={startEditing}>Edit</Button>
+                                    <Button className="actionButton" variant="danger" size="sm" value={user.id} >Delete</Button>
                                 </td>
                                 </tr>
                             </Fragment>
@@ -106,17 +198,18 @@ const HomePage = () => {
             </tbody>
             </Table>
             <div className="pagination">
-                <Button variant="danger" size="sm">Delete Selected</Button>
-                <Button id="firstpage" variant="success" size="sm">&lt;&lt;</Button>
-                <Button id="prevpage" variant="success" size="sm">&lt;</Button>
+                <Button variant="danger" size="sm" onClick={deleteSelected}>Delete Selected</Button>
+                <Button onClick={()=>changePage(1)} id="firstpage" variant="success" size="sm">&lt;&lt;</Button>
+                <Button onClick={()=>changePage(parseInt(currentPage,10)-1)} id="prevpage" variant="success" size="sm">&lt;</Button>
                     {[...Array(pages)].map((x,i) => {
                         return(
-                            <Button onClick={changePage} value={i+1} id={`page${i+1}`} key={i+1} variant="success" size="sm">{i+1}</Button>
+                            <Button onClick={(e)=>changePage(e.target.value)} value={i+1} id={`page${i+1}`} key={i+1} variant="success" size="sm">{i+1}</Button>
                         )
                     })}
-                <Button id="nextpage" variant="success" size="sm">&gt;</Button>
-                <Button id="lastpage" variant="success" size="sm">&gt;&gt;</Button>
+                <Button onClick={()=>changePage(parseInt(currentPage,10)+1)} id="nextpage" variant="success" size="sm">&gt;</Button>
+                <Button onClick={()=>changePage(pages)} id="lastpage" variant="success" size="sm">&gt;&gt;</Button>
             </div>
+            </div>)}
         </div>
     )
 }

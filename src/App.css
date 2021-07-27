@@ -6,3 +6,11 @@
   margin-right: 10px;
   padding: 0 2px 0 2px;
 }
+
+.editUser {
+  width: 60%;
+}
+
+.updateButton {
+  margin-right: 10px;
+}
