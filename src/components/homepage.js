@@ -179,7 +179,7 @@ const HomePage = () => {
             const usersFiltered = []
             for(let i=0; i<backupUser.length; i++){
                 for(let key in backupUser[i]){
-                    if(backupUser[i][key].indexOf(searchKey) !== -1){
+                    if(backupUser[i][key].toLowerCase().indexOf(searchKey) !== -1){
                         usersFiltered.push(backupUser[i])
                         break
                     }
