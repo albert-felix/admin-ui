@@ -195,7 +195,7 @@ const HomePage = () => {
 
     return (
         <div className="container">
-            <input type="text" placeholder="Search here" onChange={searchUser} />
+            <input type="text" placeholder="Search here" onKeyUp={searchUser} />
             {isEditing ? (<EditUser user={editUser} updateUser={updateUser} cancelEditing={cancelEditing}/>) :
             (<div>
             <Table responsive hover size="sm">
