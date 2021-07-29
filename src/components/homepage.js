@@ -187,6 +187,9 @@ const HomePage = () => {
             }
             setUsers(usersFiltered)
         }
+        else{
+            setUsers(backupUser)
+        }
     }
 
 
