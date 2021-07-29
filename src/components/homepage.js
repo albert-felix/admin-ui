@@ -179,7 +179,7 @@ const HomePage = () => {
             const usersFiltered = []
             for(let i=0; i<backupUser.length; i++){
                 for(let key in backupUser[i]){
-                    if(backupUser[i][key].toLowerCase().indexOf(searchKey) !== -1){
+                    if(backupUser[i][key].toLowerCase().indexOf(searchKey.toLowerCase()) !== -1){
                         usersFiltered.push(backupUser[i])
                         break
                     }
@@ -195,7 +195,7 @@ const HomePage = () => {
 
     return (
         <div className="container">
-            <input type="text" placeholder="Search here" onKeyUp={searchUser} />
+            <input type="text" placeholder="Search here" onChange={searchUser} />
             {isEditing ? (<EditUser user={editUser} updateUser={updateUser} cancelEditing={cancelEditing}/>) :
             (<div>
             <Table responsive hover size="sm">
