@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
-import { Fragment } from 'react'
 import {Table, Button} from 'react-bootstrap'
 import EditUser from './editUser'
+import TableBody from './tableBody'
 import TableHeader from './tableHeader'
 
 const HomePage = () => {
@@ -201,25 +201,12 @@ const HomePage = () => {
             (<div>
             <Table responsive hover size="sm">
                 <TableHeader toggleAllCheckBox={toggleAllCheckBox}/>
-            <tbody>
-                {currentUsers.map((user) => {
-                        return(
-                            <Fragment key={user.id}>
-                                <tr id={`row${user.id}`}>
-                                <td><input type="checkbox" id={`checkbox${user.id}`} value={user.id} onChange={toggleCheckBox}/></td>
-                                <td>{user.id}</td>
-                                <td>{user.name}</td>
-                                <td>{user.email}</td>
-                                <td>{user.role}</td>
-                                <td>
-                                    <Button className="actionButton" variant="warning" size="sm" value={user.id} onClick={startEditing}>Edit</Button>
-                                    <Button className="actionButton" variant="danger" size="sm" value={user.id} onClick={deleteUser} >Delete</Button>
-                                </td>
-                                </tr>
-                            </Fragment>
-                        )
-                })}
-            </tbody>
+                <TableBody 
+                    currentUsers={currentUsers} 
+                    toggleCheckBox={toggleCheckBox} 
+                    startEditing={startEditing} 
+                    deleteUser={deleteUser}
+                />
             </Table>
             <div className="pagination">
                 <Button variant="danger" size="sm" onClick={deleteSelected}>Delete Selected</Button>
