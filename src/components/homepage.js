@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
-import {Table, Button} from 'react-bootstrap'
+import {Table} from 'react-bootstrap'
 import EditUser from './editUser'
+import Pagination from './pagination'
 import TableBody from './tableBody'
 import TableHeader from './tableHeader'
 
@@ -30,48 +31,6 @@ const HomePage = () => {
         })
     }, [])
 
-
-    useEffect(() => {
-        if(isLoaded){
-            const disableButton = () => {
-                if(currentPage <= pages){
-                    const currentPageButton = document.getElementById(`page${currentPage}`)
-                    currentPageButton.disabled = true
-                }
-                const nextPage = document.getElementById('nextpage')
-                const lastPage = document.getElementById('lastpage')
-                const prevPage = document.getElementById('prevpage')
-                const firstPage = document.getElementById('firstpage')
-                if(pages <= 1){
-                    nextPage.disabled = true
-                    lastPage.disabled = true
-                    prevPage.disabled = true
-                    firstPage.disabled = true
-                }
-                else if(parseInt(currentPage,10) === pages){
-                    nextPage.disabled = true
-                    lastPage.disabled = true
-                    prevPage.disabled = false
-                    firstPage.disabled = false
-                }
-                else if(parseInt(currentPage,10) === 1){
-                    prevPage.disabled = true
-                    firstPage.disabled = true
-                    nextPage.disabled = false
-                    lastPage.disabled = false
-                }
-                else{
-                    prevPage.disabled = false
-                    firstPage.disabled = false
-                    nextPage.disabled = false
-                    lastPage.disabled = false
-                }
-            }
-            disableButton()
-        }
-        setPageStartIndex((currentPage-1)*pageLimit)
-    }, [currentPage, pages, isLoaded])
-
     useEffect(() => {
         setCurrentUsers(users.slice(pageStartIndex, pageStartIndex+pageLimit))
         setPages(Math.ceil(users.length/10))
@@ -82,6 +41,10 @@ const HomePage = () => {
             setCurrentPage(1)
         }
     }, [pages, currentPage])
+
+    const changePageStartIndex = (pageIndex) => {
+        setPageStartIndex(pageIndex)
+    }
 
     const toggleCheckBox = (e) => {
         const newId = e.target.value
@@ -208,18 +171,16 @@ const HomePage = () => {
                     deleteUser={deleteUser}
                 />
             </Table>
-            <div className="pagination">
-                <Button variant="danger" size="sm" onClick={deleteSelected}>Delete Selected</Button>
-                <Button onClick={()=>changePage(1)} id="firstpage" variant="success" size="sm">&lt;&lt;</Button>
-                <Button onClick={()=>changePage(parseInt(currentPage,10)-1)} id="prevpage" variant="success" size="sm">&lt;</Button>
-                    {[...Array(pages)].map((x,i) => {
-                        return(
-                            <Button onClick={(e)=>changePage(e.target.value)} value={i+1} id={`page${i+1}`} key={i+1} variant="success" size="sm">{i+1}</Button>
-                        )
-                    })}
-                <Button onClick={()=>changePage(parseInt(currentPage,10)+1)} id="nextpage" variant="success" size="sm">&gt;</Button>
-                <Button onClick={()=>changePage(pages)} id="lastpage" variant="success" size="sm">&gt;&gt;</Button>
-            </div>
+            <Pagination
+                deleteSelected={deleteSelected}
+                changePage={changePage}
+                currentPage={currentPage}
+                pages={pages}
+                isLoaded={isLoaded}
+                setPageStartIndex={setPageStartIndex}
+                changePageStartIndex={changePageStartIndex}
+                pageLimit={pageLimit}
+            />
             </div>)}
         </div>
     )
