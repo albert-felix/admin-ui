@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import { Fragment } from 'react'
 import {Table, Button} from 'react-bootstrap'
 import EditUser from './editUser'
+import TableHeader from './tableHeader'
 
 const HomePage = () => {
 
@@ -199,18 +200,9 @@ const HomePage = () => {
             {isEditing ? (<EditUser user={editUser} updateUser={updateUser} cancelEditing={cancelEditing}/>) :
             (<div>
             <Table responsive hover size="sm">
-            <thead>
-                <tr>
-                <th><input id="toggleAll" type="checkbox" onChange={toggleAllCheckBox}/></th>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Action</th>
-                </tr>
-            </thead>
+                <TableHeader toggleAllCheckBox={toggleAllCheckBox}/>
             <tbody>
-                {currentUsers.map((user,index) => {
+                {currentUsers.map((user) => {
                         return(
                             <Fragment key={user.id}>
                                 <tr id={`row${user.id}`}>
