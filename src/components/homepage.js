@@ -42,10 +42,7 @@ const HomePage = () => {
         }
     }, [pages, currentPage])
 
-    const changePageStartIndex = (pageIndex) => {
-        setPageStartIndex(pageIndex)
-    }
-
+    
     const toggleCheckBox = (e) => {
         const newId = e.target.value
         if(e.target.checked){
@@ -178,7 +175,6 @@ const HomePage = () => {
                 pages={pages}
                 isLoaded={isLoaded}
                 setPageStartIndex={setPageStartIndex}
-                changePageStartIndex={changePageStartIndex}
                 pageLimit={pageLimit}
             />
             </div>)}

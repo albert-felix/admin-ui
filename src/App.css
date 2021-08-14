@@ -24,3 +24,9 @@ body {
   margin: 25px;
   font-family: Times New Roman, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
+
+.error-boundary{
+  justify-content: center;
+  text-align: center;
+  font-family:'Arial Narrow Bold', sans-serif;
+}

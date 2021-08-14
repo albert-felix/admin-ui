@@ -1,12 +1,15 @@
-import './App.css';
+import ErrorBoundary from './components/errorBoundary';
 import Header from './components/header';
 import HomePage from './components/homepage';
+import './App.css';
 
 function App() {
   return (
     <div className="container">
       <Header/>
-      <HomePage/>
+      <ErrorBoundary>
+        <HomePage/>
+      </ErrorBoundary>
     </div>
   );
 }
